@@ -1,68 +1,133 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import browser from "webextension-polyfill";
+import Input from "./components/Input";
+import type { TopicConfig } from "./types/extension";
+import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "./utils/constants";
+
+const topicConfigFactory = (): TopicConfig => {
+  return {
+    id: crypto.randomUUID(),
+    name: "",
+    hostname: "https://ntfy.sh",
+  };
+};
+
+const TopicConfig = ({
+  topicConfig,
+  onTopicConfigChange,
+  onRemoveTopicConfig,
+}: {
+  topicConfig: TopicConfig;
+  onTopicConfigChange: (updatedTopicConfig: TopicConfig) => void;
+  onRemoveTopicConfig: (topicConfigId: string) => void;
+}) => {
+  const handleRemoveTopicConfig = () => {
+    onRemoveTopicConfig(topicConfig.id);
+  };
+
+  return (
+    <div>
+      <Input
+        label="Hostname"
+        value={topicConfig.hostname}
+        onChange={(e) =>
+          onTopicConfigChange({ ...topicConfig, hostname: e.target.value })
+        }
+      />
+      <Input
+        label="Topic name"
+        value={topicConfig.name}
+        onChange={(e) =>
+          onTopicConfigChange({ ...topicConfig, name: e.target.value })
+        }
+      />
+      <Input
+        label="Token"
+        value={topicConfig.token}
+        onChange={(e) =>
+          onTopicConfigChange({ ...topicConfig, token: e.target.value })
+        }
+        hint="Leave empty when authorization is not needed"
+      />
+      <button onClick={handleRemoveTopicConfig}>-</button>
+    </div>
+  );
+};
 
 const Options = () => {
-  const [color, setColor] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
-  const [like, setLike] = useState<boolean>(false);
+  const [topicConfigs, setTopicConfigs] = useState<TopicConfig[]>([
+    topicConfigFactory(),
+  ]);
 
   useEffect(() => {
-    // Restores select box and checkbox state using the preferences
-    // stored in chrome.storage.
-    chrome.storage.sync.get(
-      {
-        favoriteColor: "red",
-        likesColor: true,
-      },
-      (items) => {
-        setColor(items.favoriteColor);
-        setLike(items.likesColor);
-      }
-    );
+    browser.storage.sync
+      .get({
+        [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: [topicConfigFactory()],
+      })
+      .then((items) => {
+        setTopicConfigs(items.topicConfigs);
+      });
   }, []);
 
-  const saveOptions = () => {
-    // Saves options to chrome.storage.sync.
-    chrome.storage.sync.set(
-      {
-        favoriteColor: color,
-        likesColor: like,
-      },
-      () => {
-        // Update status to let user know options were saved.
-        setStatus("Options saved.");
-        const id = setTimeout(() => {
-          setStatus("");
-        }, 1000);
-        return () => clearTimeout(id);
-      }
+  const addTopicConfig = () => {
+    setTopicConfigs((currentTopicConfigs) => [
+      ...currentTopicConfigs,
+      topicConfigFactory(),
+    ]);
+  };
+
+  const removeTopicConfig = (topicConfigId: string) => {
+    setTopicConfigs((currentTopicConfigs) =>
+      currentTopicConfigs.filter(
+        (topicConfig) => topicConfig.id !== topicConfigId
+      )
     );
+  };
+
+  const updateTopicConfig = (updatedTopicConfig: TopicConfig) => {
+    setTopicConfigs((currentTopicConfigs) =>
+      currentTopicConfigs.map((topicConfig) => {
+        if (updatedTopicConfig.id === topicConfig.id) {
+          return updatedTopicConfig;
+        }
+        return topicConfig;
+      })
+    );
+  };
+
+  const saveOptions = () => {
+    // TODO: Data cleanup (consistent url) and validation
+
+    browser.storage.sync
+      .set({
+        [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: topicConfigs,
+      })
+      .then(() => {
+        return browser.runtime.sendMessage({ event: "configSave" });
+      })
+      .then(() => {
+        // TODO: Show success
+      })
+      .catch(() => {
+        // TODO: Show error
+      });
   };
 
   return (
     <>
       <div>
-        Favorite color: <select
-          value={color}
-          onChange={(event) => setColor(event.target.value)}
-        >
-          <option value="red">red</option>
-          <option value="green">green</option>
-          <option value="blue">blue</option>
-          <option value="yellow">yellow</option>
-        </select>
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={like}
-            onChange={(event) => setLike(event.target.checked)}
+        {topicConfigs.map((topicConfig) => (
+          <TopicConfig
+            topicConfig={topicConfig}
+            onTopicConfigChange={updateTopicConfig}
+            onRemoveTopicConfig={removeTopicConfig}
           />
-          I like colors.
-        </label>
+        ))}
+        {!topicConfigs.length &&
+          "Press the button below to add a topic subscription"}
       </div>
-      <div>{status}</div>
+      <button onClick={addTopicConfig}>+</button>
       <button onClick={saveOptions}>Save</button>
     </>
   );
