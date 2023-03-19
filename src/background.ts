@@ -89,6 +89,8 @@ browser.notifications.onClicked.addListener((notificationId) => {
   });
 });
 
+// This does not get triggered at the right time due to OS limitations
+// https://bugs.chromium.org/p/chromium/issues/detail?id=1212142
 browser.notifications.onClosed.addListener(
   (notificationId: string, byUser: boolean) => {
     console.log("reached");
