@@ -25,11 +25,15 @@ function closeEventSource(eventSource: EventSource): void {
   eventSources = eventSources.filter((es) => es.url !== eventSource.url);
 }
 
-function getTopicQuery(topicConfig: TopicConfig): string {
-  const authHeader = `Bearer ${topicConfig.token}`;
+function getTopicQuery(token?: string): string {
+  if (!token) {
+    return "";
+  }
+
+  const authHeader = `Bearer ${token}`;
   const auth = btoa(authHeader).replace(/=+$/, "");
   const query = new URLSearchParams({ auth });
-  return query.toString();
+  return `?${query.toString()}`;
 }
 
 function subscribe() {
@@ -37,9 +41,9 @@ function subscribe() {
   getTopicConfigs().then((topicConfigs) => {
     console.log("Found topicConfigs", topicConfigs);
     topicConfigs.forEach((topicConfig) => {
-      const query = getTopicQuery(topicConfig);
+      const query = getTopicQuery(topicConfig.token);
       const eventSourceUrl = new URL(
-        `${topicConfig.name}/sse?${query}`,
+        `${topicConfig.name}/sse${query}`,
         topicConfig.hostname
       );
       const eventSource = new EventSource(eventSourceUrl);

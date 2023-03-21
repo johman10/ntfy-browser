@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import browser from "webextension-polyfill";
 import Input from "./components/Input";
 import type { TopicConfig } from "./types/extension";
@@ -119,6 +119,7 @@ const Options = () => {
       <div>
         {topicConfigs.map((topicConfig) => (
           <TopicConfig
+            key={topicConfig.id}
             topicConfig={topicConfig}
             onTopicConfigChange={updateTopicConfig}
             onRemoveTopicConfig={removeTopicConfig}
@@ -133,9 +134,10 @@ const Options = () => {
   );
 };
 
-ReactDOM.render(
+const rootElement = document.getElementById("root")!;
+const root = createRoot(rootElement);
+root.render(
   <React.StrictMode>
     <Options />
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
