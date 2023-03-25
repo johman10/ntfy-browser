@@ -1,0 +1,70 @@
+{
+  "extensionDescription": {
+    "message": "A ntfy browser extension to receive notifications without having the page open",
+    "description": "Description of the extension."
+  },
+  "optionsTitle": {
+    "message": "Options",
+    "description": "Title of the options page."
+  },
+  "optionsEmpty": {
+    "message": "Press the button below to add a topic subscription",
+    "description": "Message when there are no topic configured yet."
+  },
+  "optionsTopicLabel": {
+    "message": "Topic name",
+    "description": "Label shown above input field for Topic."
+  },
+  "optionsHostnameLabel": {
+    "message": "Hostname",
+    "description": "Label shown above input field for Hostname."
+  },
+  "optionsTokenLabel": {
+    "message": "Token",
+    "description": "Label shown above input field for Token."
+  },
+  "optionsTokenHint": {
+    "message": "Leave empty when authorization is not required",
+    "description": "Hint shown below input field for token."
+  },
+  "optionsRemoveTopic": {
+    "message": "Remove topic",
+    "description": "Button label to remove a topic."
+  },
+  "optionsAddTopic": {
+    "message": "Add topic",
+    "description": "Button label to add a topic."
+  },
+  "optionsSave": {
+    "message": "Save",
+    "description": "Button label to save options"
+  },
+  "optionsSnackbarSaveSuccess": {
+    "message": "Options saved successfully",
+    "description": "Shown after saving options successfully"
+  },
+  "optionsSnackbarSaveFailure": {
+    "message": "Options couldn't be saved",
+    "description": "Shown after failing to save options"
+  },
+  "errorBoundaryTitle": {
+    "message": "Oh no, ntfy-browser crashed",
+    "description": "Title when an unexpected error occurs"
+  },
+  "errorBoundaryDescription": {
+    "message": "This should obviously not happen. Very sorry about this.",
+    "description": "Description when an unexpected error occurs"
+  },
+  "errorBoundaryDescriptionGithub": {
+    "message": "If you have a minute please open an issue on Github.",
+    "description": "Link text to point the user to opening an Github issue"
+  },
+  "errorBoundaryStackTraceTitle": {
+    "message": "Stack trace",
+    "description": "Title above the stack trace when an unexpected error occurs"
+  },
+  "erroBoundaryStackTraceCopy": {
+    "message": "Copy stack trace",
+    "description": "Button label to copy the stack trace when an unexpected error occurs"
+  }
+}

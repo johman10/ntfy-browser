@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BadgeNumberManager } from "./utils/BadgeNumberManager";
-import browser from "webextension-polyfill";
+import { runtime } from "webextension-polyfill";
 
 const Popup = () => {
   useEffect(() => {
@@ -9,10 +9,10 @@ const Popup = () => {
   }, []);
 
   const openOptions = () => {
-    if (browser.runtime.openOptionsPage) {
-      browser.runtime.openOptionsPage();
+    if (runtime.openOptionsPage) {
+      runtime.openOptionsPage();
     } else {
-      window.open(browser.runtime.getURL("options.html"));
+      window.open(runtime.getURL("options.html"));
     }
   };
 

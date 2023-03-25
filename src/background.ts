@@ -1,4 +1,4 @@
-import browser from "webextension-polyfill";
+import { runtime, storage, notifications } from "webextension-polyfill";
 import { EventMessage, TopicConfig } from "./types/extension";
 import { BadgeNumberManager } from "./utils/BadgeNumberManager";
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "./utils/constants";
@@ -10,7 +10,7 @@ const notificationManager = new NotificationManager();
 const badgeNumberManager = new BadgeNumberManager();
 
 function getTopicConfigs(): Promise<TopicConfig[]> {
-  return browser.storage.sync
+  return storage.sync
     .get({
       [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: [],
     })
@@ -36,36 +36,39 @@ function getTopicQuery(token?: string): string {
   return `?${query.toString()}`;
 }
 
+function setupEventSource(topicConfig: TopicConfig) {
+  const query = getTopicQuery(topicConfig.token);
+  const eventSourceUrl = new URL(
+    `${topicConfig.name}/sse${query}`,
+    topicConfig.hostname
+  );
+  const eventSource = new EventSource(eventSourceUrl);
+
+  eventSource.onmessage = (e) => {
+    const notificationData: NtfyNotification = JSON.parse(e.data);
+    notificationManager.publish(notificationData).then(() => {
+      return badgeNumberManager.higher();
+    });
+  };
+
+  eventSource.onerror = () => {
+    closeEventSource(eventSource);
+    setupEventSource(topicConfig);
+  };
+
+  eventSource.onopen = () => {
+    console.log("EventSource opened", eventSource.url);
+    if (!eventSources.includes(eventSource)) {
+      eventSources = [...eventSources, eventSource];
+    }
+  };
+}
+
 function subscribe() {
   console.log("Subscribing");
   getTopicConfigs().then((topicConfigs) => {
     console.log("Found topicConfigs", topicConfigs);
-    topicConfigs.forEach((topicConfig) => {
-      const query = getTopicQuery(topicConfig.token);
-      const eventSourceUrl = new URL(
-        `${topicConfig.name}/sse${query}`,
-        topicConfig.hostname
-      );
-      const eventSource = new EventSource(eventSourceUrl);
-
-      eventSource.onmessage = (e) => {
-        const notificationData: NtfyNotification = JSON.parse(e.data);
-        notificationManager.publish(notificationData).then(() => {
-          return badgeNumberManager.higher();
-        });
-      };
-
-      eventSource.onerror = () => {
-        closeEventSource(eventSource);
-      };
-
-      eventSource.onopen = () => {
-        console.log("EventSource opened", eventSource.url);
-        if (!eventSources.includes(eventSource)) {
-          eventSources = [...eventSources, eventSource];
-        }
-      };
-    });
+    topicConfigs.forEach(setupEventSource);
   });
 }
 
@@ -76,7 +79,7 @@ function unsubscribe() {
 
 subscribe();
 
-browser.runtime.onMessage.addListener((message: EventMessage) => {
+runtime.onMessage.addListener((message: EventMessage) => {
   console.log("messageListener", message);
   if (message.event === "configSave") {
     unsubscribe();
@@ -87,7 +90,7 @@ browser.runtime.onMessage.addListener((message: EventMessage) => {
   assertNever(message.event);
 });
 
-browser.notifications.onClicked.addListener((notificationId) => {
+notifications.onClicked.addListener((notificationId) => {
   notificationManager.onClick(notificationId).then(() => {
     badgeNumberManager.lower();
   });
@@ -95,7 +98,7 @@ browser.notifications.onClicked.addListener((notificationId) => {
 
 // This does not get triggered at the right time due to OS limitations
 // https://bugs.chromium.org/p/chromium/issues/detail?id=1212142
-browser.notifications.onClosed.addListener(
+notifications.onClosed.addListener(
   (notificationId: string, byUser: boolean) => {
     console.log("reached");
     const notification =

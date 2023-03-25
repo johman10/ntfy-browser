@@ -17,6 +17,9 @@
     "url": "https://github.com/johman10/ntfy-browser.git"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
