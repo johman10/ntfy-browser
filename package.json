@@ -4,8 +4,12 @@
   "description": "A ntfy browser extension to receive notifications without having the page open",
   "main": "index.js",
   "scripts": {
-    "watch": "webpack --config webpack/webpack.dev.js --watch",
-    "build": "webpack --config webpack/webpack.prod.js",
+    "watch": "npm run watch:chrome",
+    "watch:chrome": "TARGET_BROWSER=chrome webpack --config webpack/webpack.dev.js --watch",
+    "watch:firefox": "TARGET_BROWSER=firefox webpack --config webpack/webpack.dev.js --watch",
+    "build": "npm run build:chrome && npm run build:firefox",
+    "build:chrome": "TARGET_BROWSER=chrome webpack --config webpack/webpack.prod.js",
+    "build:firefox": "TARGET_BROWSER=firefox webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist",
     "test": "npx jest",
     "style": "prettier --write \"src/**/*.{ts,tsx}\""
@@ -40,6 +44,8 @@
     "webextension-polyfill": "^0.10.0",
     "webpack": "^5.76.2",
     "webpack-cli": "^5.0.1",
-    "webpack-merge": "^5.0.0"
+    "webpack-merge": "^5.0.0",
+    "wext-manifest-loader": "^3.0.0",
+    "wext-manifest-webpack-plugin": "^1.2.1"
   }
 }
