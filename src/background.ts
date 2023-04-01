@@ -1,5 +1,10 @@
 import { runtime, storage, notifications } from "webextension-polyfill";
-import { EventMessage, TopicConfig } from "./types/extension";
+import {
+  EventMessage,
+  EventResponse,
+  EventResponseType,
+  TopicConfig,
+} from "./types/extension";
 import { BadgeNumberManager } from "./utils/BadgeNumberManager";
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "./utils/constants";
 import { NotificationManager } from "./utils/NotificationManager";
@@ -12,7 +17,7 @@ const badgeNumberManager = new BadgeNumberManager();
 function getTopicConfigs(): Promise<TopicConfig[]> {
   return storage.sync
     .get({
-      [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: [],
+      [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: {},
     })
     .then((storage) => {
       return storage[BROWSER_TOPIC_CONFIGS_STORAGE_KEY];
@@ -37,38 +42,47 @@ function getTopicQuery(token?: string): string {
 }
 
 function setupEventSource(topicConfig: TopicConfig) {
-  const query = getTopicQuery(topicConfig.token);
-  const eventSourceUrl = new URL(
-    `${topicConfig.name}/sse${query}`,
-    topicConfig.hostname
-  );
-  const eventSource = new EventSource(eventSourceUrl);
+  return new Promise<EventResponse>((resolve) => {
+    const query = getTopicQuery(topicConfig.token);
+    const eventSourceUrl = new URL(
+      `${topicConfig.name}/sse${query}`,
+      topicConfig.hostname
+    );
+    const eventSource = new EventSource(eventSourceUrl);
 
-  eventSource.onmessage = (e) => {
-    const notificationData: NtfyNotification = JSON.parse(e.data);
-    notificationManager.publish(notificationData).then(() => {
-      return badgeNumberManager.higher();
-    });
-  };
+    eventSource.onmessage = (e) => {
+      const notificationData: NtfyNotification = JSON.parse(e.data);
+      notificationManager.publish(notificationData).then(() => {
+        return badgeNumberManager.higher();
+      });
+    };
 
-  eventSource.onerror = () => {
-    closeEventSource(eventSource);
-    setupEventSource(topicConfig);
-  };
+    eventSource.onerror = (event) => {
+      closeEventSource(eventSource);
+      resolve({
+        event: EventResponseType.CONNECTION_FAILED as const,
+        topicConfig,
+      });
+    };
 
-  eventSource.onopen = () => {
-    console.log("EventSource opened", eventSource.url);
-    if (!eventSources.includes(eventSource)) {
-      eventSources = [...eventSources, eventSource];
-    }
-  };
+    eventSource.onopen = () => {
+      console.log("EventSource opened", eventSource.url);
+      if (!eventSources.includes(eventSource)) {
+        eventSources = [...eventSources, eventSource];
+      }
+      resolve({
+        event: EventResponseType.CONNECTION_SUCCESS as const,
+        topicConfig,
+      });
+    };
+  });
 }
 
 function subscribe() {
   console.log("Subscribing");
-  getTopicConfigs().then((topicConfigs) => {
+  return getTopicConfigs().then((topicConfigs) => {
     console.log("Found topicConfigs", topicConfigs);
-    topicConfigs.forEach(setupEventSource);
+    return Promise.all(Object.values(topicConfigs).map(setupEventSource));
   });
 }
 
@@ -79,16 +93,17 @@ function unsubscribe() {
 
 subscribe();
 
-runtime.onMessage.addListener((message: EventMessage) => {
-  console.log("messageListener", message);
-  if (message.event === "configSave") {
-    unsubscribe();
-    subscribe();
-    return;
-  }
+runtime.onMessage.addListener(
+  (message: EventMessage): Promise<EventResponse[]> | void => {
+    console.log("messageListener", message);
+    if (message.event === "configSave") {
+      unsubscribe();
+      return subscribe();
+    }
 
-  assertNever(message.event);
-});
+    assertNever(message.event);
+  }
+);
 
 notifications.onClicked.addListener((notificationId) => {
   notificationManager.onClick(notificationId).then(() => {

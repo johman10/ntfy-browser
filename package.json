@@ -4,9 +4,9 @@
   "description": "A ntfy browser extension to receive notifications without having the page open",
   "main": "index.js",
   "scripts": {
-    "watch": "npm run watch:chrome",
-    "watch:chrome": "TARGET_BROWSER=chrome webpack --config webpack/webpack.dev.js --watch",
-    "watch:firefox": "TARGET_BROWSER=firefox webpack --config webpack/webpack.dev.js --watch",
+    "start": "npm run start:chrome",
+    "start:chrome": "TARGET_BROWSER=chrome webpack --config webpack/webpack.dev.js --watch",
+    "start:firefox": "TARGET_BROWSER=firefox webpack --config webpack/webpack.dev.js --watch",
     "build": "npm run build:chrome && npm run build:firefox",
     "build:chrome": "TARGET_BROWSER=chrome webpack --config webpack/webpack.prod.js",
     "build:firefox": "TARGET_BROWSER=firefox webpack --config webpack/webpack.prod.js",
@@ -23,9 +23,11 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@mui/lab": "^5.0.0-alpha.124",
     "@mui/material": "^5.11.14",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.9"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.224",

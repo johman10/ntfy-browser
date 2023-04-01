@@ -7,9 +7,13 @@
     "message": "Options",
     "description": "Title of the options page."
   },
-  "optionsEmpty": {
-    "message": "Press the button below to add a topic subscription",
-    "description": "Message when there are no topic configured yet."
+  "optionsEmptyTitle": {
+    "message": "You haven't configured any topics yet.",
+    "description": "Title when there are no topic configured yet."
+  },
+  "optionsEmptyInstructions": {
+    "message": "Click on the \"Add topic\" button below to add a new one.",
+    "description": "Instructions when there are no topic configured yet."
   },
   "optionsTopicLabel": {
     "message": "Topic name",
@@ -18,6 +22,38 @@
   "optionsHostnameLabel": {
     "message": "Hostname",
     "description": "Label shown above input field for Hostname."
+  },
+  "optionsFieldRequired": {
+    "message": "This field is required",
+    "description": "Shown whan a field is not filled, but required"
+  },
+  "optionsFieldInvalidUrl": {
+    "message": "This field does not seem to be a URL, ensure it starts with http:// or https://",
+    "description": "Shown whan a URL field is invalid"
+  },
+  "optionsFieldTooLong": {
+    "message": "This field can only be $MAX_LENGTH$ long",
+    "description": "Shown whan a field value is too long",
+    "placeholders": {
+      "max_length": {
+        "content": "$2",
+        "example": "64"
+      }
+    }
+  },
+  "optionsFieldTooShort": {
+    "message": "This field has to be at least $MIN_LENGTH$ long",
+    "description": "Shown whan a field is too short",
+    "placeholders": {
+      "min_length": {
+        "content": "$2",
+        "example": "1"
+      }
+    }
+  },
+  "optionsFieldInvalidCharacters": {
+    "message": "This field contains invalid characters, ensure to only use letters, numbers, - and _",
+    "description": "Shown when a field value contains non allowed characters"
   },
   "optionsTokenLabel": {
     "message": "Token",
@@ -40,12 +76,22 @@
     "description": "Button label to save options"
   },
   "optionsSnackbarSaveSuccess": {
-    "message": "Options saved successfully",
+    "message": "Options saved and connected successfully",
     "description": "Shown after saving options successfully"
   },
   "optionsSnackbarSaveFailure": {
     "message": "Options couldn't be saved",
     "description": "Shown after failing to save options"
+  },
+  "optionsSnackbarConnectionFailure": {
+    "message": "Failed to connect to topics: $FAILED_TOPIC_NAMES$. Please check the settings.",
+    "description": "Shown when the configuration didn't result in a working connection",
+    "placeholders": {
+      "failed_topic_names": {
+        "content": "$1",
+        "example": "TestTopic1, TestTopic2"
+      }
+    }
   },
   "errorBoundaryTitle": {
     "message": "Oh no, ntfy-browser crashed",
