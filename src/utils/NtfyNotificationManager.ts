@@ -1,15 +1,22 @@
-import browser from "webextension-polyfill";
+import browser, {
+  Notifications,
+  notifications,
+  tabs,
+} from "webextension-polyfill";
+import { BadgeNumberManager } from "./BadgeNumberManager";
 
-export class NotificationManager {
-  private static instance: NotificationManager | null = null;
+export class NtfyNotificationManager {
+  private static instance: NtfyNotificationManager;
 
   private notificationCache: NtfyNotification[] = [];
+  private badgeNumberManager: BadgeNumberManager | null = null;
 
-  constructor() {
-    if (NotificationManager.instance) {
-      return NotificationManager.instance;
+  constructor(badgeNumberManager: BadgeNumberManager) {
+    if (NtfyNotificationManager.instance) {
+      return NtfyNotificationManager.instance;
     }
-    NotificationManager.instance = this;
+    NtfyNotificationManager.instance = this;
+    this.badgeNumberManager = badgeNumberManager;
   }
 
   getNotificationById(notificationId: string) {
@@ -31,14 +38,14 @@ export class NotificationManager {
       return Promise.resolve();
     }
 
-    return browser.tabs.create({
+    return tabs.create({
       url: notification.click || notification.attachment?.url,
     });
   }
 
   private getBaseNotificationOptions(
     notification: NtfyNotification
-  ): Omit<browser.Notifications.CreateNotificationOptions, "type"> {
+  ): Omit<Notifications.CreateNotificationOptions, "type"> {
     let priority = (notification.priority || 0) - 3;
     if (priority < 0) {
       priority = 0;
@@ -56,7 +63,7 @@ export class NotificationManager {
 
   private getNotificationOptions(
     notification: NtfyNotification
-  ): browser.Notifications.CreateNotificationOptions {
+  ): Notifications.CreateNotificationOptions {
     if (
       notification.attachment &&
       notification.attachment.type.startsWith("image/")
@@ -75,10 +82,20 @@ export class NotificationManager {
   }
 
   async publish(notification: NtfyNotification) {
-    await browser.notifications.create(
+    await notifications.create(
       notification.id,
       this.getNotificationOptions(notification)
     );
     this.addToCache(notification);
+
+    this.badgeNumberManager?.higher();
+  }
+
+  startClickListener() {
+    notifications.onClicked.addListener((notificationId) => {
+      return this.onClick(notificationId).then(() => {
+        this.badgeNumberManager?.lower();
+      });
+    });
   }
 }

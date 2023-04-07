@@ -1,6 +1,6 @@
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "../utils/constants";
 
-export interface TopicConfig {
+export interface Topic {
   id: string;
   name: string;
   hostname: string;
@@ -17,9 +17,9 @@ export enum EventResponseType {
 }
 export interface EventResponse {
   event: EventResponseType;
-  topicConfig: TopicConfig;
+  topicConfig: Topic;
 }
 
 export interface BrowserStorage {
-  [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: TopicConfig[];
+  [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: Topic[];
 }

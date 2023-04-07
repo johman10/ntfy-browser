@@ -19,21 +19,34 @@ Install dependencies and watch for file changes
 
 ```
 npm install
-npm run watch
+npm start
 ```
 
-By default this will build and watch changes for Chrome. Alternatively you can run watch for a specific browser by doing:
+By default this will build and watch changes for Chrome. Alternatively you can start for a specific browser by doing:
 
 ```
-npm run watch:firefox
+npm run start:firefox
 ```
 
 Add the extension to the browser by following the respective instructions:
 
 - [Chrome](https://support.google.com/chrome/a/answer/2714278?hl=en#:~:text=Step%202%3A%20Test%20the%20app%20or%20extension)
 - [Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension#installing)
-  The files for the extension will live in the `dist` folder.
+
+The files for the extension will live in the `dist/[browser]` folder.
+
+Please note that some changes will require you to refresh the browser extension before testing.
 
 ### Test
 
 Some automated test are present. You can run them with: `npm test`
+
+### Production build
+
+If you want to test for production you can use:
+
+```
+npm run build
+```
+
+This will build the extension in a production manner for all configured browsers.

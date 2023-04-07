@@ -112,5 +112,19 @@
   "erroBoundaryStackTraceCopy": {
     "message": "Copy stack trace",
     "description": "Button label to copy the stack trace when an unexpected error occurs"
+  },
+  "connectFailureNotificationTitle": {
+    "message": "Failed to connect to topics: $FAILED_TOPIC_NAMES$.",
+    "description": "Notification title shown when the extension failed to connect to a topic",
+    "placeholders": {
+      "failed_topic_names": {
+        "content": "$1",
+        "example": "TestTopic1, TestTopic2"
+      }
+    }
+  },
+  "connectFailureNotificationMessage": {
+    "message": "Click here to open settings.",
+    "description": "Notification message shown when the extension failed to connect to a topic"
   }
 }
