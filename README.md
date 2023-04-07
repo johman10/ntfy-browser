@@ -1,70 +1,39 @@
-# Chrome Extension TypeScript Starter
+![ntfy logo](https://raw.githubusercontent.com/binwiederhier/ntfy/main/web/public/static/img/ntfy.png)
 
-![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
+# ntfy browser
 
-Chrome Extension, TypeScript and Visual Studio Code
+Unofficial browser extension for [ntfy](https://github.com/binwiederhier/ntfy). The aim is to support Chrome and Firefox, but it's build so that other browsers that support the webextension API can be added in the future.
 
-## Prerequisites
+## Contributing
 
-* [node + npm](https://nodejs.org/) (Current Version)
+This project aims to encourage others to contribute. Feel free to do so by forking this repository and follow the steps below.
 
-## Option
+### Prerequisites
 
-* [Visual Studio Code](https://code.visualstudio.com/)
+- [Node](https://nodejs.org/) >= 19
+- [NPM](https://npmjs.org/) >= 9
 
-## Includes the following
+### Setup
 
-* TypeScript
-* Webpack
-* React
-* Jest
-* Example Code
-    * Chrome Storage
-    * Options Version 2
-    * content script
-    * count up badge number
-    * background
-
-## Project Structure
-
-* src/typescript: TypeScript source files
-* src/assets: static files
-* dist: Chrome Extension directory
-* dist/js: Generated JavaScript files
-
-## Setup
+Install dependencies and watch for file changes
 
 ```
 npm install
-```
-
-## Import as Visual Studio Code project
-
-...
-
-## Build
-
-```
-npm run build
-```
-
-## Build in watch mode
-
-### terminal
-
-```
 npm run watch
 ```
 
-### Visual Studio Code
+By default this will build and watch changes for Chrome. Alternatively you can run watch for a specific browser by doing:
 
-Run watch mode.
+```
+npm run watch:firefox
+```
 
-type `Ctrl + Shift + B`
+Add the extension to the browser by following the respective instructions:
 
-## Load extension to chrome
+- [Chrome](https://support.google.com/chrome/a/answer/2714278?hl=en#:~:text=Step%202%3A%20Test%20the%20app%20or%20extension)
+- [Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension#installing)
+  The files for the extension will live in the `dist` folder.
 
-Load `dist` directory
+### Test
 
-## Test
-`npx jest` or `npm run test`
+Some automated test are present. You can run them with: `npm test`
