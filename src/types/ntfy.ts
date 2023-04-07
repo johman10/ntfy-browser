@@ -6,7 +6,7 @@ interface NtfyNotificationAttachment {
   expires: number;
 }
 
-interface NtfyNotification {
+export interface NtfyNotification {
   id: string;
   time: number;
   expires: number;

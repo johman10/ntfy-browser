@@ -1,12 +1,16 @@
 import React from "react";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar as MaterialAppBar,
+  Box,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import theme from "../../utils/theme";
-import { i18n } from "webextension-polyfill";
 
-export default ({ title }: { title: string }) => {
+export default function AppBar({ title }: { title: string }) {
   return (
     <>
-      <AppBar
+      <MaterialAppBar
         position="fixed"
         sx={{
           width: "100%",
@@ -31,8 +35,8 @@ export default ({ title }: { title: string }) => {
             {title}
           </Typography>
         </Toolbar>
-      </AppBar>
+      </MaterialAppBar>
       <Toolbar />
     </>
   );
-};
+}

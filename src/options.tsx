@@ -81,7 +81,7 @@ const Options = () => {
               eventResponse.event === EventResponseType.CONNECTION_FAILED
           );
           if (failedResponses.length) {
-            let failedTopicNames = failedResponses
+            const failedTopicNames = failedResponses
               .map((eventResponse) => eventResponse.topicConfig.name)
               .join(", ");
             setSnackbarMessage(
@@ -170,6 +170,7 @@ const Options = () => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const rootElement = document.getElementById("root")!;
 const root = createRoot(rootElement);
 root.render(

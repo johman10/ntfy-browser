@@ -1,9 +1,6 @@
-import browser, {
-  Notifications,
-  notifications,
-  tabs,
-} from "webextension-polyfill";
+import { Notifications, notifications, tabs } from "webextension-polyfill";
 import { BadgeNumberManager } from "./BadgeNumberManager";
+import { NtfyNotification } from "../types/ntfy";
 
 export class NtfyNotificationManager {
   private static instance: NtfyNotificationManager;

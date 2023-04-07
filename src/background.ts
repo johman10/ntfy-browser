@@ -17,7 +17,7 @@ const topicSubscriptionManager = new TopicSubscriptionManager(
   ntfyNotificationManager
 );
 
-function reportError(error: any, failedTopicNames?: string) {
+function reportError(error: Error, failedTopicNames?: string) {
   console.error(error);
 
   if (!failedTopicNames) {
@@ -52,7 +52,7 @@ runtime.onMessage.addListener(
               eventResponse.event === EventResponseType.CONNECTION_FAILED
           );
           if (failedResponses.length) {
-            let failedTopicNames = failedResponses
+            const failedTopicNames = failedResponses
               .map((eventResponse) => eventResponse.topicConfig.name)
               .join(", ");
             reportError(

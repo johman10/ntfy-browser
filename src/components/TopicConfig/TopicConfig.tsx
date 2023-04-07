@@ -12,7 +12,7 @@ import { i18n } from "webextension-polyfill";
 import { BrowserStorage } from "../../types/extension";
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "../../utils/constants";
 
-export default ({
+export default function TopicConfig({
   onRemoveTopicConfig,
   register,
   index,
@@ -22,7 +22,7 @@ export default ({
   register: UseFormRegister<BrowserStorage>;
   index: number;
   errors: FormState<BrowserStorage>["errors"];
-}) => {
+}) {
   const baseFieldKey = `${BROWSER_TOPIC_CONFIGS_STORAGE_KEY}.${index}` as const;
   const topicErrors = errors?.[BROWSER_TOPIC_CONFIGS_STORAGE_KEY]?.[index];
 
@@ -83,4 +83,4 @@ export default ({
       </Card>
     </Grid2>
   );
-};
+}
