@@ -4,8 +4,8 @@ import {
   EventResponse,
   EventResponseType,
 } from "./types/extension";
-import { BadgeNumberManager } from "./utils/BadgeNumberManager";
-import { NtfyNotificationManager } from "./utils/NtfyNotificationManager";
+import BadgeNumberManager from "./utils/BadgeNumberManager";
+import NtfyNotificationManager from "./utils/NtfyNotificationManager";
 import { assertNever } from "./utils/types";
 import BrowserNotificationManager from "./utils/BrowserNotificationManager";
 import TopicSubscriptionManager from "./utils/TopicSubscriptionManager";

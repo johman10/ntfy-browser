@@ -1,15 +1,15 @@
 import { storage } from "webextension-polyfill";
 import { EventResponse, EventResponseType, Topic } from "../types/extension";
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "./constants";
-import { NtfyNotificationManager } from "./NtfyNotificationManager";
+import NtfyNotificationManager from "./NtfyNotificationManager";
+import { NtfyNotification } from "../types/ntfy";
 
 export default class TopicSubscriptionManager {
   private static instance: TopicSubscriptionManager;
 
   private eventSources: EventSource[] = [];
-  private ntfyNotificationManager: NtfyNotificationManager | null = null;
 
-  constructor(ntfyNotificationManager: NtfyNotificationManager) {
+  constructor(private ntfyNotificationManager: NtfyNotificationManager) {
     if (TopicSubscriptionManager.instance) {
       return TopicSubscriptionManager.instance;
     }
@@ -53,7 +53,7 @@ export default class TopicSubscriptionManager {
 
       eventSource.onmessage = (e) => {
         const notificationData: NtfyNotification = JSON.parse(e.data);
-        this.ntfyNotificationManager?.publish(notificationData);
+        this.ntfyNotificationManager.publish(notificationData);
       };
 
       eventSource.onerror = () => {

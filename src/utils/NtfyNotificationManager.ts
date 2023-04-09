@@ -1,19 +1,17 @@
 import { Notifications, notifications, tabs } from "webextension-polyfill";
-import { BadgeNumberManager } from "./BadgeNumberManager";
+import { BadgeNumberManagerInterface } from "./BadgeNumberManager";
 import { NtfyNotification } from "../types/ntfy";
 
-export class NtfyNotificationManager {
+export default class NtfyNotificationManager {
   private static instance: NtfyNotificationManager;
 
   private notificationCache: NtfyNotification[] = [];
-  private badgeNumberManager: BadgeNumberManager | null = null;
 
-  constructor(badgeNumberManager: BadgeNumberManager) {
+  constructor(private badgeNumberManager: BadgeNumberManagerInterface) {
     if (NtfyNotificationManager.instance) {
       return NtfyNotificationManager.instance;
     }
     NtfyNotificationManager.instance = this;
-    this.badgeNumberManager = badgeNumberManager;
   }
 
   getNotificationById(notificationId: string) {
@@ -85,13 +83,13 @@ export class NtfyNotificationManager {
     );
     this.addToCache(notification);
 
-    this.badgeNumberManager?.higher();
+    this.badgeNumberManager.higher();
   }
 
   startClickListener() {
     notifications.onClicked.addListener((notificationId) => {
       return this.onClick(notificationId).then(() => {
-        this.badgeNumberManager?.lower();
+        this.badgeNumberManager.lower();
       });
     });
   }

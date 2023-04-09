@@ -1,6 +1,12 @@
-import browser from "webextension-polyfill";
+import { action } from "webextension-polyfill";
 
-export class BadgeNumberManager {
+export interface BadgeNumberManagerInterface {
+  lower: () => Promise<void>;
+  higher: () => Promise<void>;
+  reset: () => Promise<void>;
+}
+
+export default class BadgeNumberManager implements BadgeNumberManagerInterface {
   private static instance: BadgeNumberManager | null = null;
 
   private currentNumber = 0;
@@ -34,6 +40,6 @@ export class BadgeNumberManager {
     if (this.currentNumber < 1) {
       text = "";
     }
-    return browser.action.setBadgeText({ text });
+    return action.setBadgeText({ text });
   }
 }
