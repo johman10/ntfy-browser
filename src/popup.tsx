@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { BadgeNumberManager } from "./utils/BadgeNumberManager";
+import BadgeNumberManager from "./utils/BadgeNumberManager";
 import { runtime } from "webextension-polyfill";
 
 const Popup = () => {
