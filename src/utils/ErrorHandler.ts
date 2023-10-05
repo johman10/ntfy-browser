@@ -18,12 +18,12 @@ export default class ErrorHandler {
         iconUrl: "../ntfy-512.png",
         title: i18n.getMessage(
           "connectFailureNotificationTitle",
-          failedTopicNames
+          failedTopicNames,
         ),
         message: i18n.getMessage("connectFailureNotificationMessage"),
         isClickable: true,
       },
-      runtime.getURL("options.html")
+      runtime.getURL("options.html"),
     );
   }
 }

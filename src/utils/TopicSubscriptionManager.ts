@@ -24,7 +24,7 @@ export default class TopicSubscriptionManager {
   private unsubscribe = (eventSource: EventSource): void => {
     eventSource.close();
     this.eventSources = this.eventSources.filter(
-      (es) => es.url !== eventSource.url
+      (es) => es.url !== eventSource.url,
     );
   };
 
@@ -51,7 +51,7 @@ export default class TopicSubscriptionManager {
       const query = this.getTopicQuery(topicConfig.token);
       const eventSourceUrl = new URL(
         `${topicConfig.name}/sse${query}`,
-        topicConfig.hostname
+        topicConfig.hostname,
       );
       const eventSource = new EventSource(eventSourceUrl);
 
@@ -60,7 +60,7 @@ export default class TopicSubscriptionManager {
         this.ntfyNotificationManager.publish(notificationData);
       };
 
-      eventSource.onerror = (e) => {
+      eventSource.onerror = () => {
         this.unsubscribe(eventSource);
         resolve({
           status: SubscriptionResultStatus.FAILURE as const,

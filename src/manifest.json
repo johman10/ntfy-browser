@@ -22,7 +22,7 @@
       "js/background.js"
     ]
   },
-  "browser_specific_settings": {
+  "__firefox__browser_specific_settings": {
     "gecko": {
       "id": "johveck@gmail.com",
       "strict_min_version": "110.0"

@@ -18,7 +18,7 @@ export default class BrowserNotificationManager {
 
   getNotificationById(notificationId: string) {
     return this.notificationCache.find(
-      (notification) => notification.id === notificationId
+      (notification) => notification.id === notificationId,
     );
   }
 
@@ -40,7 +40,7 @@ export default class BrowserNotificationManager {
   async publish(
     id: string,
     notification: Notifications.CreateNotificationOptions,
-    click?: string
+    click?: string,
   ) {
     await notifications.create(id, notification);
     this.addToCache({ ...notification, id, click });

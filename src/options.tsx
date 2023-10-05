@@ -81,8 +81,8 @@ const Options = () => {
             setSnackbarMessage(
               i18n.getMessage(
                 "optionsSnackbarConnectionFailure",
-                failedTopicNames
-              )
+                failedTopicNames,
+              ),
             );
             return;
           }
@@ -96,7 +96,7 @@ const Options = () => {
         .finally(() => {
           setLoading(false);
         });
-    }
+    },
   );
 
   return (
@@ -171,5 +171,5 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Options />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

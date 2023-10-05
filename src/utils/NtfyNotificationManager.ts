@@ -16,7 +16,7 @@ export default class NtfyNotificationManager {
 
   getNotificationById(notificationId: string) {
     return this.notificationCache.find(
-      (notification) => notification.id === notificationId
+      (notification) => notification.id === notificationId,
     );
   }
 
@@ -39,7 +39,7 @@ export default class NtfyNotificationManager {
   }
 
   private getBaseNotificationOptions(
-    notification: NtfyNotification
+    notification: NtfyNotification,
   ): Omit<Notifications.CreateNotificationOptions, "type"> {
     let priority = (notification.priority || 0) - 3;
     if (priority < 0) {
@@ -57,7 +57,7 @@ export default class NtfyNotificationManager {
   }
 
   private getNotificationOptions(
-    notification: NtfyNotification
+    notification: NtfyNotification,
   ): Notifications.CreateNotificationOptions {
     if (
       notification.attachment &&
@@ -79,7 +79,7 @@ export default class NtfyNotificationManager {
   async publish(notification: NtfyNotification) {
     await notifications.create(
       notification.id,
-      this.getNotificationOptions(notification)
+      this.getNotificationOptions(notification),
     );
     this.addToCache(notification);
 

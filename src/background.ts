@@ -10,11 +10,11 @@ const ntfyNotificationManager = new NtfyNotificationManager(badgeNumberManager);
 const browserNotificationManager = new BrowserNotificationManager();
 const errorHandler = new ErrorHandler(browserNotificationManager);
 const topicSubscriptionManager = new TopicSubscriptionManager(
-  ntfyNotificationManager
+  ntfyNotificationManager,
 );
 const backgroundMessageHandler = new BackgroundMessageHandler(
   topicSubscriptionManager,
-  errorHandler
+  errorHandler,
 );
 
 browserNotificationManager.startClickListener();

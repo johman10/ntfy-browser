@@ -7,7 +7,7 @@ import { OptionsMessage, OptionsMessageType } from "./OptionsMessageHandler";
 
 export default class MessageHandler<
   MessageToHandle extends BackgroundMessage | OptionsMessage,
-  SendingMessageType extends BackgroundMessageType | OptionsMessageType
+  SendingMessageType extends BackgroundMessageType | OptionsMessageType,
 > {
   requests = new Map<
     MessageToHandle["type"],
@@ -16,7 +16,7 @@ export default class MessageHandler<
 
   registerMessengerRequests() {
     throw new Error(
-      "Implementation error: missing overwrite for registerMessengerRequests"
+      "Implementation error: missing overwrite for registerMessengerRequests",
     );
   }
 
@@ -34,7 +34,7 @@ export default class MessageHandler<
 
   protected async sendMessage<T>(
     type: SendingMessageType,
-    data: any = null
+    data: any = null,
   ): Promise<T | null> {
     try {
       const response = await runtime.sendMessage({ type, data });

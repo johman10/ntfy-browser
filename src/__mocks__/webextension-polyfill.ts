@@ -16,7 +16,7 @@ export const notifications: Partial<Notifications.Static> & {
   onClicked: {
     removeListener: jest.fn((callback) => {
       notificationClickListeners = notificationClickListeners.filter(
-        (rc) => rc !== callback
+        (rc) => rc !== callback,
       );
     }),
     hasListener: jest.fn(() => {
