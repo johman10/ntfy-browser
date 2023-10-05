@@ -9,19 +9,17 @@ import { LoadingButton } from "@mui/lab";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { i18n, storage, runtime } from "webextension-polyfill";
-import {
-  BrowserStorage,
-  EventResponse,
-  EventResponseType,
-  Topic,
-} from "./types/extension";
+import { i18n, storage } from "webextension-polyfill";
+import { BrowserStorage, Topic } from "./types/extension";
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "./utils/constants";
 import theme from "./utils/theme";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AppBar from "./components/AppBar";
 import { useFieldArray, useForm } from "react-hook-form";
 import TopicConfig from "./components/TopicConfig";
+import OptionsMessageHandler from "./utils/messages/OptionsMessageHandler";
+
+const optionsMessageHandler = new OptionsMessageHandler();
 
 const topicConfigFactory = (): Topic => {
   return {
@@ -74,15 +72,11 @@ const Options = () => {
       setLoading(true);
       storage.sync
         .set(data)
-        .then(() => runtime.sendMessage({ event: "configSave" }))
-        .then((output: EventResponse[]) => {
-          const failedResponses = output.filter(
-            (eventResponse) =>
-              eventResponse.event === EventResponseType.CONNECTION_FAILED
-          );
+        .then(() => optionsMessageHandler.reconnectTopics())
+        .then((failedResponses) => {
           if (failedResponses.length) {
             const failedTopicNames = failedResponses
-              .map((eventResponse) => eventResponse.topicConfig.name)
+              .map((eventResponse) => eventResponse.topic.name)
               .join(", ");
             setSnackbarMessage(
               i18n.getMessage(
@@ -95,7 +89,8 @@ const Options = () => {
 
           setSnackbarMessage(i18n.getMessage("optionsSnackbarSaveSuccess"));
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           setSnackbarMessage(i18n.getMessage("optionsSnackbarSaveFailure"));
         })
         .finally(() => {

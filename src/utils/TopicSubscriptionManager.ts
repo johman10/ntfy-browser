@@ -1,5 +1,9 @@
 import { storage } from "webextension-polyfill";
-import { EventResponse, EventResponseType, Topic } from "../types/extension";
+import {
+  SubscriptionResult,
+  SubscriptionResultStatus,
+  Topic,
+} from "../types/extension";
 import { BROWSER_TOPIC_CONFIGS_STORAGE_KEY } from "./constants";
 import NtfyNotificationManager from "./NtfyNotificationManager";
 import { NtfyNotification } from "../types/ntfy";
@@ -17,12 +21,12 @@ export default class TopicSubscriptionManager {
     this.ntfyNotificationManager = ntfyNotificationManager;
   }
 
-  private unsubscribe(eventSource: EventSource): void {
+  private unsubscribe = (eventSource: EventSource): void => {
     eventSource.close();
     this.eventSources = this.eventSources.filter(
       (es) => es.url !== eventSource.url
     );
-  }
+  };
 
   private async getTopicConfigs(): Promise<Topic[]> {
     const storedData = await storage.sync.get({
@@ -37,13 +41,13 @@ export default class TopicSubscriptionManager {
     }
 
     const authHeader = `Bearer ${token}`;
-    const auth = window.btoa(authHeader).replace(/=+$/, "");
+    const auth = btoa(authHeader).replace(/=+$/, "");
     const query = new URLSearchParams({ auth });
     return `?${query.toString()}`;
   }
 
-  private subscribe(topicConfig: Topic) {
-    return new Promise<EventResponse>((resolve) => {
+  private subscribe = (topicConfig: Topic) => {
+    return new Promise<SubscriptionResult>((resolve) => {
       const query = this.getTopicQuery(topicConfig.token);
       const eventSourceUrl = new URL(
         `${topicConfig.name}/sse${query}`,
@@ -56,11 +60,11 @@ export default class TopicSubscriptionManager {
         this.ntfyNotificationManager.publish(notificationData);
       };
 
-      eventSource.onerror = () => {
+      eventSource.onerror = (e) => {
         this.unsubscribe(eventSource);
         resolve({
-          event: EventResponseType.CONNECTION_FAILED as const,
-          topicConfig,
+          status: SubscriptionResultStatus.FAILURE as const,
+          topic: topicConfig,
         });
       };
 
@@ -69,20 +73,20 @@ export default class TopicSubscriptionManager {
           this.eventSources = [...this.eventSources, eventSource];
         }
         resolve({
-          event: EventResponseType.CONNECTION_SUCCESS as const,
-          topicConfig,
+          status: SubscriptionResultStatus.SUCCESS as const,
+          topic: topicConfig,
         });
       };
     });
-  }
+  };
 
-  async subscribeAll() {
+  subscribeAll = async () => {
     const topicConfigs = await this.getTopicConfigs();
     const connectPromises = Object.values(topicConfigs).map(this.subscribe);
     return Promise.all(connectPromises);
-  }
+  };
 
-  unsubscribeAll() {
+  unsubscribeAll = () => {
     this.eventSources.forEach(this.unsubscribe);
-  }
+  };
 }

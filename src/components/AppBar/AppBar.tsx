@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   AppBar as MaterialAppBar,
   Box,
@@ -7,7 +7,13 @@ import {
 } from "@mui/material";
 import theme from "../../utils/theme";
 
-export default function AppBar({ title }: { title: string }) {
+export default function AppBar({
+  title,
+  children,
+}: {
+  title: string;
+  children?: ReactNode;
+}) {
   return (
     <>
       <MaterialAppBar
@@ -34,6 +40,7 @@ export default function AppBar({ title }: { title: string }) {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {title}
           </Typography>
+          {children}
         </Toolbar>
       </MaterialAppBar>
       <Toolbar />

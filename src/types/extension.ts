@@ -7,18 +7,24 @@ export interface Topic {
   token?: string;
 }
 
-export interface EventMessage {
-  event: "configSave";
+export enum SubscriptionResultStatus {
+  SUCCESS = "SUCCESS",
+  FAILURE = "FAILURE",
 }
 
-export enum EventResponseType {
-  CONNECTION_SUCCESS = "connectionSuccess",
-  CONNECTION_FAILED = "connectionFailed",
+export interface SubscriptionResultFailure {
+  status: SubscriptionResultStatus.FAILURE;
+  topic: Topic;
 }
-export interface EventResponse {
-  event: EventResponseType;
-  topicConfig: Topic;
+
+export interface SubscriptionResultSuccess {
+  status: SubscriptionResultStatus.SUCCESS;
+  topic: Topic;
 }
+
+export type SubscriptionResult =
+  | SubscriptionResultFailure
+  | SubscriptionResultSuccess;
 
 export interface BrowserStorage {
   [BROWSER_TOPIC_CONFIGS_STORAGE_KEY]: Topic[];
