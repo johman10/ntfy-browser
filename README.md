@@ -4,7 +4,7 @@
 
 Unofficial browser extension for [ntfy](https://github.com/binwiederhier/ntfy). The aim is to support Chrome and Firefox, but it's build so that other browsers that support the webextension API can be added in the future.
 
-**Please note: this project is still under heavy development, and should so be considered a beta.** Star & follow this repository to keep track of future updates. Once considered stable I will publish the extension.
+**Please note: this project is still under heavy development, and should so be considered a beta.** Star & watch this repository to keep track of future updates. Once considered stable I will publish the extension.
 
 ## Contributing
 
