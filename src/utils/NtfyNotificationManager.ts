@@ -1,27 +1,61 @@
 import { Notifications, notifications, tabs } from "webextension-polyfill";
 import { BadgeNumberManagerInterface } from "./BadgeNumberManager";
 import { NtfyNotification } from "../types/ntfy";
+import { storage } from "webextension-polyfill";
+import { NOTIFICATIONS_CACHE_STORAGE_KEY } from "./constants";
 
 export default class NtfyNotificationManager {
   private static instance: NtfyNotificationManager;
 
   private notificationCache: NtfyNotification[] = [];
 
-  constructor(private badgeNumberManager: BadgeNumberManagerInterface) {
+  restorePromise: Promise<void> = new Promise(() => {});
+
+  constructor(private badgeNumberManager: BadgeNumberManagerInterface) {}
+
+  static async init(badgeNumberManager: BadgeNumberManagerInterface) {
     if (NtfyNotificationManager.instance) {
       return NtfyNotificationManager.instance;
     }
-    NtfyNotificationManager.instance = this;
+    NtfyNotificationManager.instance = new NtfyNotificationManager(
+      badgeNumberManager
+    );
+
+    await storage.local
+      .get([NOTIFICATIONS_CACHE_STORAGE_KEY])
+      .then((storage) => {
+        const value = storage[NOTIFICATIONS_CACHE_STORAGE_KEY];
+        if (!value) return;
+
+        NtfyNotificationManager.instance.notificationCache = value;
+      })
+      .catch(console.error);
+
+    return NtfyNotificationManager.instance;
   }
 
   getNotificationById(notificationId: string) {
     return this.notificationCache.find(
-      (notification) => notification.id === notificationId,
+      (notification) => notification.id === notificationId
     );
   }
 
-  private addToCache(notification: NtfyNotification) {
+  getAll() {
+    return [...this.notificationCache].reverse();
+  }
+
+  private async addToCache(notification: NtfyNotification) {
     this.notificationCache.push(notification);
+
+    // Remove the oldest notification when the limit is reached
+    // TODO: make this configurable?
+    if (this.notificationCache.length > 50) {
+      this.notificationCache.shift();
+    }
+
+    await storage.local
+      .set({ [NOTIFICATIONS_CACHE_STORAGE_KEY]: this.notificationCache })
+      .catch(console.error);
   }
 
   onClick(notificationId: string) {
@@ -39,7 +73,7 @@ export default class NtfyNotificationManager {
   }
 
   private getBaseNotificationOptions(
-    notification: NtfyNotification,
+    notification: NtfyNotification
   ): Omit<Notifications.CreateNotificationOptions, "type"> {
     let priority = (notification.priority || 0) - 3;
     if (priority < 0) {
@@ -51,13 +85,13 @@ export default class NtfyNotificationManager {
       title: notification.title || notification.topic,
       message: notification.message || "",
       priority,
-      eventTime: notification.time,
+      eventTime: notification.time * 1000,
       isClickable: !!notification.click,
     };
   }
 
   private getNotificationOptions(
-    notification: NtfyNotification,
+    notification: NtfyNotification
   ): Notifications.CreateNotificationOptions {
     if (
       notification.attachment &&
@@ -79,9 +113,9 @@ export default class NtfyNotificationManager {
   async publish(notification: NtfyNotification) {
     await notifications.create(
       notification.id,
-      this.getNotificationOptions(notification),
+      this.getNotificationOptions(notification)
     );
-    this.addToCache(notification);
+    await this.addToCache(notification);
 
     this.badgeNumberManager.higher();
   }

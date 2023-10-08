@@ -18,7 +18,6 @@ export default class TopicSubscriptionManager {
       return TopicSubscriptionManager.instance;
     }
     TopicSubscriptionManager.instance = this;
-    this.ntfyNotificationManager = ntfyNotificationManager;
   }
 
   private unsubscribe = (eventSource: EventSource): void => {

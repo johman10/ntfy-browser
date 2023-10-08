@@ -9,6 +9,7 @@ export interface BadgeNumberManagerInterface {
 export default class BadgeNumberManager implements BadgeNumberManagerInterface {
   private static instance: BadgeNumberManager | null = null;
 
+  // TODO: Sync number between instances by using storage.local API
   private currentNumber = 0;
 
   constructor() {

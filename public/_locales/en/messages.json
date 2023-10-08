@@ -126,5 +126,17 @@
   "connectFailureNotificationMessage": {
     "message": "Click here to open settings.",
     "description": "Notification message shown when the extension failed to connect to a topic"
+  },
+  "notificationTags": {
+    "message": "Tags:",
+    "description": "Pretext before text only notification tags"
+  },
+  "notificationActionOpenLink": {
+    "message": "Open link",
+    "description": "Button label which allows to open the link linked to the notification action"
+  },
+  "notificationActionCopyLink": {
+    "message": "Copy link",
+    "description": "Button label which allows to copy the link linked to the notification action"
   }
 }

@@ -5,19 +5,24 @@ import TopicSubscriptionManager from "./utils/TopicSubscriptionManager";
 import BackgroundMessageHandler from "./utils/messages/BackgroundMessageHandler";
 import ErrorHandler from "./utils/ErrorHandler";
 
-const badgeNumberManager = new BadgeNumberManager();
-const ntfyNotificationManager = new NtfyNotificationManager(badgeNumberManager);
-const browserNotificationManager = new BrowserNotificationManager();
-const errorHandler = new ErrorHandler(browserNotificationManager);
-const topicSubscriptionManager = new TopicSubscriptionManager(
-  ntfyNotificationManager,
-);
-const backgroundMessageHandler = new BackgroundMessageHandler(
-  topicSubscriptionManager,
-  errorHandler,
-);
+async function init() {
+  const badgeNumberManager = new BadgeNumberManager();
+  const ntfyNotificationManager =
+    await NtfyNotificationManager.init(badgeNumberManager);
+  const browserNotificationManager = new BrowserNotificationManager();
+  const errorHandler = new ErrorHandler(browserNotificationManager);
+  const topicSubscriptionManager = new TopicSubscriptionManager(
+    ntfyNotificationManager,
+  );
+  const backgroundMessageHandler = new BackgroundMessageHandler(
+    topicSubscriptionManager,
+    errorHandler,
+  );
 
-browserNotificationManager.startClickListener();
-ntfyNotificationManager.startClickListener();
-topicSubscriptionManager.subscribeAll();
-backgroundMessageHandler.init();
+  browserNotificationManager.startClickListener();
+  ntfyNotificationManager.startClickListener();
+  topicSubscriptionManager.subscribeAll();
+  backgroundMessageHandler.init();
+}
+
+init();
