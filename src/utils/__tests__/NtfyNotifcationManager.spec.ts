@@ -12,7 +12,7 @@ describe("NtfyNotificationManager", () => {
 
     jest.isolateModules(() => {
       const module = jest.requireActual<NtfyNotificationManagerImport>(
-        "../NtfyNotificationManager"
+        "../NtfyNotificationManager",
       );
       NtfyNotificationManager = module.default;
     });
@@ -20,10 +20,10 @@ describe("NtfyNotificationManager", () => {
 
   it("is a singleton", async () => {
     const badgeNumberManager1 = await NtfyNotificationManager.init(
-      mockBadgeNumberManager
+      mockBadgeNumberManager,
     );
     const badgeNumberManager2 = await NtfyNotificationManager.init(
-      mockBadgeNumberManager
+      mockBadgeNumberManager,
     );
 
     expect(badgeNumberManager1).toBe(badgeNumberManager2);

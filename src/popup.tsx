@@ -73,5 +73,5 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Popup />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -16,7 +16,7 @@ export default class NtfyNotificationManager {
   restorePromise: Promise<void> = new Promise(() => {});
 
   private constructor(
-    private badgeNumberManager: BadgeNumberManagerInterface
+    private badgeNumberManager: BadgeNumberManagerInterface,
   ) {}
 
   static async init(badgeNumberManager: BadgeNumberManagerInterface) {
@@ -24,7 +24,7 @@ export default class NtfyNotificationManager {
       return NtfyNotificationManager.instance;
     }
     NtfyNotificationManager.instance = new NtfyNotificationManager(
-      badgeNumberManager
+      badgeNumberManager,
     );
 
     const storageValue = await storage.local.get([
@@ -41,7 +41,7 @@ export default class NtfyNotificationManager {
 
   getNotificationById(notificationId: string) {
     return this.notificationCache.find(
-      (notification) => notification.id === notificationId
+      (notification) => notification.id === notificationId,
     );
   }
 
@@ -86,7 +86,7 @@ export default class NtfyNotificationManager {
   }
 
   private getBaseNotificationOptions(
-    notification: NtfyNotification
+    notification: NtfyNotification,
   ): Omit<Notifications.CreateNotificationOptions, "type"> {
     let priority = (notification.priority || 0) - 3;
     if (priority < 0) {
@@ -104,7 +104,7 @@ export default class NtfyNotificationManager {
   }
 
   private getNotificationOptions(
-    notification: NtfyNotification
+    notification: NtfyNotification,
   ): Notifications.CreateNotificationOptions {
     if (
       notification.attachment &&
@@ -126,7 +126,7 @@ export default class NtfyNotificationManager {
   async publish(notification: NtfyNotification) {
     await notifications.create(
       notification.id,
-      this.getNotificationOptions(notification)
+      this.getNotificationOptions(notification),
     );
     await this.addToCache(notification);
 

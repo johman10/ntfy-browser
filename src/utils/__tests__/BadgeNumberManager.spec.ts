@@ -22,7 +22,7 @@ describe("BadgeNumberManager", () => {
 
     jest.isolateModules(() => {
       const module = jest.requireActual<BadgeNumberManagerImport>(
-        "../BadgeNumberManager"
+        "../BadgeNumberManager",
       );
       BadgeNumberManager = module.default;
     });
