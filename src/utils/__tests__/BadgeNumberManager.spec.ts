@@ -1,6 +1,16 @@
-import { action } from "webextension-polyfill";
+import { action } from "../../__mocks__/webextension-polyfill";
 
-jest.mock("webextension-polyfill");
+jest.mock("webextension-polyfill", () => ({
+  action: {
+    setBadgeText: jest.fn(),
+  },
+  storage: {
+    local: {
+      set: jest.fn(() => Promise.resolve({})),
+      get: jest.fn(() => Promise.resolve({})),
+    },
+  },
+}));
 
 type BadgeNumberManagerImport = typeof import("../BadgeNumberManager");
 
@@ -12,21 +22,21 @@ describe("BadgeNumberManager", () => {
 
     jest.isolateModules(() => {
       const module = jest.requireActual<BadgeNumberManagerImport>(
-        "../BadgeNumberManager",
+        "../BadgeNumberManager"
       );
       BadgeNumberManager = module.default;
     });
   });
 
-  it("is a singleton", () => {
-    const badgeNumberManager1 = new BadgeNumberManager();
-    const badgeNumberManager2 = new BadgeNumberManager();
+  it("is a singleton", async () => {
+    const badgeNumberManager1 = await BadgeNumberManager.init();
+    const badgeNumberManager2 = await BadgeNumberManager.init();
 
     expect(badgeNumberManager1).toBe(badgeNumberManager2);
   });
 
   it("can higher the badge text", async () => {
-    const badgeNumberManager = new BadgeNumberManager();
+    const badgeNumberManager = await BadgeNumberManager.init();
 
     await badgeNumberManager.higher();
     expect(action.setBadgeText).toHaveBeenNthCalledWith(1, {
@@ -40,7 +50,7 @@ describe("BadgeNumberManager", () => {
   });
 
   it("can lower the badge text", async () => {
-    const badgeNumberManager = new BadgeNumberManager();
+    const badgeNumberManager = await BadgeNumberManager.init();
 
     await badgeNumberManager.higher();
     await badgeNumberManager.higher();
@@ -57,7 +67,7 @@ describe("BadgeNumberManager", () => {
   });
 
   it("can reset the badge text", async () => {
-    const badgeNumberManager = new BadgeNumberManager();
+    const badgeNumberManager = await BadgeNumberManager.init();
 
     await badgeNumberManager.higher();
 

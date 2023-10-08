@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import BadgeNumberManager from "./utils/BadgeNumberManager";
 import { runtime } from "webextension-polyfill";
@@ -7,13 +7,35 @@ import { IconButton, ThemeProvider } from "@mui/material";
 import PopupContent from "./components/PopupContent";
 import SettingsIcon from "@mui/icons-material/Settings";
 import theme from "./utils/theme";
-
-const badgeNumberManager = new BadgeNumberManager();
+import Loader from "./components/Loader";
+import NtfyNotificationManager from "./utils/NtfyNotificationManager";
+import { NtfyNotification } from "./types/ntfy";
 
 const Popup = () => {
+  const [badgeNumberManager, setBadgeNumberManager] =
+    useState<BadgeNumberManager>();
+  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<NtfyNotification[]>([]);
+
   useEffect(() => {
-    badgeNumberManager.reset();
+    BadgeNumberManager.init()
+      .then((badgeManager) => {
+        badgeManager.startStorageChangeListener();
+        setBadgeNumberManager(badgeManager);
+
+        return NtfyNotificationManager.init(badgeManager);
+      })
+      .then((ntfyManager) => {
+        setNotifications(ntfyManager.getAll());
+        setLoading(false);
+      })
+      .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (!badgeNumberManager) return;
+    badgeNumberManager.reset();
+  }, [badgeNumberManager]);
 
   const openOptions = () => {
     if (runtime.openOptionsPage) {
@@ -23,6 +45,14 @@ const Popup = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <ThemeProvider theme={theme}>
+        <Loader />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ minWidth: "700px" }}>
@@ -31,7 +61,7 @@ const Popup = () => {
             <SettingsIcon />
           </IconButton>
         </AppBar>
-        <PopupContent badgeNumberManager={badgeNumberManager} />
+        <PopupContent notifications={notifications} />
       </div>
     </ThemeProvider>
   );
@@ -43,5 +73,5 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Popup />
-  </React.StrictMode>,
+  </React.StrictMode>
 );

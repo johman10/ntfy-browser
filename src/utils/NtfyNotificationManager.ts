@@ -1,8 +1,12 @@
-import { Notifications, notifications, tabs } from "webextension-polyfill";
+import {
+  Notifications,
+  notifications,
+  tabs,
+  storage,
+} from "webextension-polyfill";
 import { BadgeNumberManagerInterface } from "./BadgeNumberManager";
 import { NtfyNotification } from "../types/ntfy";
-import { storage } from "webextension-polyfill";
-import { NOTIFICATIONS_CACHE_STORAGE_KEY } from "./constants";
+import { NTFY_NOTIFICATION_MANAGER_STORAGE_KEY } from "./constants";
 
 export default class NtfyNotificationManager {
   private static instance: NtfyNotificationManager;
@@ -11,7 +15,9 @@ export default class NtfyNotificationManager {
 
   restorePromise: Promise<void> = new Promise(() => {});
 
-  constructor(private badgeNumberManager: BadgeNumberManagerInterface) {}
+  private constructor(
+    private badgeNumberManager: BadgeNumberManagerInterface
+  ) {}
 
   static async init(badgeNumberManager: BadgeNumberManagerInterface) {
     if (NtfyNotificationManager.instance) {
@@ -21,15 +27,14 @@ export default class NtfyNotificationManager {
       badgeNumberManager
     );
 
-    await storage.local
-      .get([NOTIFICATIONS_CACHE_STORAGE_KEY])
-      .then((storage) => {
-        const value = storage[NOTIFICATIONS_CACHE_STORAGE_KEY];
-        if (!value) return;
-
-        NtfyNotificationManager.instance.notificationCache = value;
-      })
-      .catch(console.error);
+    const storageValue = await storage.local.get([
+      NTFY_NOTIFICATION_MANAGER_STORAGE_KEY,
+    ]);
+    const value = storageValue?.[NTFY_NOTIFICATION_MANAGER_STORAGE_KEY];
+    if (value) {
+      NtfyNotificationManager.instance.notificationCache =
+        value.notificationCache;
+    }
 
     return NtfyNotificationManager.instance;
   }
@@ -53,9 +58,17 @@ export default class NtfyNotificationManager {
       this.notificationCache.shift();
     }
 
-    await storage.local
-      .set({ [NOTIFICATIONS_CACHE_STORAGE_KEY]: this.notificationCache })
-      .catch(console.error);
+    const storageValue = await storage.local.get([
+      NTFY_NOTIFICATION_MANAGER_STORAGE_KEY,
+    ]);
+    const classStorageValue =
+      storageValue?.[NTFY_NOTIFICATION_MANAGER_STORAGE_KEY] || {};
+    await storage.local.set({
+      [NTFY_NOTIFICATION_MANAGER_STORAGE_KEY]: {
+        ...classStorageValue,
+        notificationCache: this.notificationCache,
+      },
+    });
   }
 
   onClick(notificationId: string) {
@@ -117,13 +130,13 @@ export default class NtfyNotificationManager {
     );
     await this.addToCache(notification);
 
-    this.badgeNumberManager.higher();
+    await this.badgeNumberManager.higher();
   }
 
   startClickListener() {
     notifications.onClicked.addListener((notificationId) => {
       return this.onClick(notificationId).then(() => {
-        this.badgeNumberManager.lower();
+        return this.badgeNumberManager.lower();
       });
     });
   }

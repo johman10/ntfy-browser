@@ -1,4 +1,21 @@
-import { Action, Notifications } from "webextension-polyfill";
+import { Action, Notifications, Storage } from "webextension-polyfill";
+
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+
+export const storage: DeepPartial<Storage.Static> = {
+  local: {
+    set: jest.fn(() => {
+      return Promise.resolve({});
+    }),
+    get: jest.fn(() => {
+      return Promise.resolve({});
+    }),
+  },
+};
 
 export const action: Partial<Action.Static> = {
   setBadgeText: jest.fn().mockResolvedValue(undefined),
@@ -16,7 +33,7 @@ export const notifications: Partial<Notifications.Static> & {
   onClicked: {
     removeListener: jest.fn((callback) => {
       notificationClickListeners = notificationClickListeners.filter(
-        (rc) => rc !== callback,
+        (rc) => rc !== callback
       );
     }),
     hasListener: jest.fn(() => {
@@ -34,6 +51,7 @@ export const notifications: Partial<Notifications.Static> & {
 
 export default {
   action,
+  storage,
   notifications,
   __triggerNotificationClickListeners,
 };

@@ -6,17 +6,18 @@ import BackgroundMessageHandler from "./utils/messages/BackgroundMessageHandler"
 import ErrorHandler from "./utils/ErrorHandler";
 
 async function init() {
-  const badgeNumberManager = new BadgeNumberManager();
+  const badgeNumberManager = await BadgeNumberManager.init();
+  badgeNumberManager.startStorageChangeListener();
   const ntfyNotificationManager =
     await NtfyNotificationManager.init(badgeNumberManager);
   const browserNotificationManager = new BrowserNotificationManager();
   const errorHandler = new ErrorHandler(browserNotificationManager);
   const topicSubscriptionManager = new TopicSubscriptionManager(
-    ntfyNotificationManager,
+    ntfyNotificationManager
   );
   const backgroundMessageHandler = new BackgroundMessageHandler(
     topicSubscriptionManager,
-    errorHandler,
+    errorHandler
   );
 
   browserNotificationManager.startClickListener();

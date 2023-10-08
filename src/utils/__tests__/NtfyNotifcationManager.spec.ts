@@ -1,7 +1,5 @@
 import MockBadgeNumberManager from "../__mocks__/BadgeNumberManager";
 
-jest.mock("webextension-polyfill");
-
 type NtfyNotificationManagerImport =
   typeof import("../NtfyNotificationManager");
 
@@ -14,18 +12,18 @@ describe("NtfyNotificationManager", () => {
 
     jest.isolateModules(() => {
       const module = jest.requireActual<NtfyNotificationManagerImport>(
-        "../NtfyNotificationManager",
+        "../NtfyNotificationManager"
       );
       NtfyNotificationManager = module.default;
     });
   });
 
-  it("is a singleton", () => {
-    const badgeNumberManager1 = new NtfyNotificationManager(
-      mockBadgeNumberManager,
+  it("is a singleton", async () => {
+    const badgeNumberManager1 = await NtfyNotificationManager.init(
+      mockBadgeNumberManager
     );
-    const badgeNumberManager2 = new NtfyNotificationManager(
-      mockBadgeNumberManager,
+    const badgeNumberManager2 = await NtfyNotificationManager.init(
+      mockBadgeNumberManager
     );
 
     expect(badgeNumberManager1).toBe(badgeNumberManager2);
