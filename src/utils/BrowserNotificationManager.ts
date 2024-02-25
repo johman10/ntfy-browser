@@ -16,9 +16,9 @@ export default class BrowserNotificationManager {
     BrowserNotificationManager.instance = this;
   }
 
-  getNotificationById(notificationId: string) {
+  private getNotificationById(notificationId: string) {
     return this.notificationCache.find(
-      (notification) => notification.id === notificationId,
+      (notification) => notification.id === notificationId
     );
   }
 
@@ -26,7 +26,7 @@ export default class BrowserNotificationManager {
     this.notificationCache.push(notification);
   }
 
-  onClick(notificationId: string) {
+  private onClick(notificationId: string) {
     const notification = this.getNotificationById(notificationId);
     if (!notification || !notification.isClickable) {
       return Promise.resolve();
@@ -40,13 +40,13 @@ export default class BrowserNotificationManager {
   async publish(
     id: string,
     notification: Notifications.CreateNotificationOptions,
-    click?: string,
+    click?: string
   ) {
     await notifications.create(id, notification);
     this.addToCache({ ...notification, id, click });
   }
 
-  startClickListener() {
+  startListeners() {
     notifications.onClicked.addListener((notificationId) => {
       return this.onClick(notificationId);
     });

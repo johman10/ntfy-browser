@@ -13,18 +13,19 @@ export default class NtfyNotificationManager {
 
   private notificationCache: NtfyNotification[] = [];
 
-  restorePromise: Promise<void> = new Promise(() => {});
-
   private constructor(
-    private badgeNumberManager: BadgeNumberManagerInterface,
+    private badgeNumberManager: BadgeNumberManagerInterface
   ) {}
 
-  static async init(badgeNumberManager: BadgeNumberManagerInterface) {
-    if (NtfyNotificationManager.instance) {
+  static async init(
+    badgeNumberManager: BadgeNumberManagerInterface,
+    reset = false
+  ) {
+    if (!reset && NtfyNotificationManager.instance) {
       return NtfyNotificationManager.instance;
     }
     NtfyNotificationManager.instance = new NtfyNotificationManager(
-      badgeNumberManager,
+      badgeNumberManager
     );
 
     const storageValue = await storage.local.get([
@@ -39,9 +40,9 @@ export default class NtfyNotificationManager {
     return NtfyNotificationManager.instance;
   }
 
-  getNotificationById(notificationId: string) {
+  private getNotificationById(notificationId: string) {
     return this.notificationCache.find(
-      (notification) => notification.id === notificationId,
+      (notification) => notification.id === notificationId
     );
   }
 
@@ -71,22 +72,29 @@ export default class NtfyNotificationManager {
     });
   }
 
-  onClick(notificationId: string) {
+  /**
+   *
+   * @param notificationId the ID of the notification
+   * @returns true if click was handled correctly, false if notification was not found
+   */
+  private async onClick(notificationId: string): Promise<boolean> {
     const notification = this.getNotificationById(notificationId);
-    if (
-      !notification ||
-      (!notification.click && !notification.attachment?.url)
-    ) {
-      return Promise.resolve();
+    if (!notification) {
+      return false;
     }
 
-    return tabs.create({
+    if (!notification.click && !notification.attachment?.url) {
+      return true;
+    }
+
+    await tabs.create({
       url: notification.click || notification.attachment?.url,
     });
+    return true;
   }
 
   private getBaseNotificationOptions(
-    notification: NtfyNotification,
+    notification: NtfyNotification
   ): Omit<Notifications.CreateNotificationOptions, "type"> {
     let priority = (notification.priority || 0) - 3;
     if (priority < 0) {
@@ -104,7 +112,7 @@ export default class NtfyNotificationManager {
   }
 
   private getNotificationOptions(
-    notification: NtfyNotification,
+    notification: NtfyNotification
   ): Notifications.CreateNotificationOptions {
     if (
       notification.attachment &&
@@ -126,18 +134,19 @@ export default class NtfyNotificationManager {
   async publish(notification: NtfyNotification) {
     await notifications.create(
       notification.id,
-      this.getNotificationOptions(notification),
+      this.getNotificationOptions(notification)
     );
     await this.addToCache(notification);
 
     await this.badgeNumberManager.higher();
   }
 
-  startClickListener() {
-    notifications.onClicked.addListener((notificationId) => {
-      return this.onClick(notificationId).then(() => {
-        return this.badgeNumberManager.lower();
-      });
+  startListeners() {
+    notifications.onClicked.addListener(async (notificationId: string) => {
+      const onClickResult = await this.onClick(notificationId);
+      if (onClickResult) {
+        await this.badgeNumberManager.lower();
+      }
     });
   }
 }

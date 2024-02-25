@@ -13,15 +13,15 @@ async function init() {
   const browserNotificationManager = new BrowserNotificationManager();
   const errorHandler = new ErrorHandler(browserNotificationManager);
   const topicSubscriptionManager = new TopicSubscriptionManager(
-    ntfyNotificationManager,
+    ntfyNotificationManager
   );
   const backgroundMessageHandler = new BackgroundMessageHandler(
     topicSubscriptionManager,
-    errorHandler,
+    errorHandler
   );
 
-  browserNotificationManager.startClickListener();
-  ntfyNotificationManager.startClickListener();
+  browserNotificationManager.startListeners();
+  ntfyNotificationManager.startListeners();
   topicSubscriptionManager.subscribeAll();
   backgroundMessageHandler.init();
 }

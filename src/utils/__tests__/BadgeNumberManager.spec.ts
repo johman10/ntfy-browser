@@ -1,16 +1,6 @@
-import { action } from "../../__mocks__/webextension-polyfill";
+jest.mock("webextension-polyfill");
 
-jest.mock("webextension-polyfill", () => ({
-  action: {
-    setBadgeText: jest.fn(),
-  },
-  storage: {
-    local: {
-      set: jest.fn(() => Promise.resolve({})),
-      get: jest.fn(() => Promise.resolve({})),
-    },
-  },
-}));
+import { action } from "webextension-polyfill";
 
 type BadgeNumberManagerImport = typeof import("../BadgeNumberManager");
 
@@ -18,11 +8,11 @@ describe("BadgeNumberManager", () => {
   let BadgeNumberManager: BadgeNumberManagerImport["default"];
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     jest.isolateModules(() => {
       const module = jest.requireActual<BadgeNumberManagerImport>(
-        "../BadgeNumberManager",
+        "../BadgeNumberManager"
       );
       BadgeNumberManager = module.default;
     });
