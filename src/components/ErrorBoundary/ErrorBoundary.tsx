@@ -19,13 +19,13 @@ export default class ErrorBoundary extends React.Component<
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error("[ErrorBoundary] Error caught", error, info);
     const prettierOriginalStack = info.componentStack
-      .trim()
+      ?.trim()
       .split("\n")
       .map((line) => `  at ${line}`)
       .join("\n");
     this.setState({
       error: true,
-      stackTrace: prettierOriginalStack,
+      stackTrace: prettierOriginalStack || "No stack available",
     });
   }
 
