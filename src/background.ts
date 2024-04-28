@@ -7,7 +7,7 @@ import ErrorHandler from "./utils/ErrorHandler";
 
 async function init() {
   const badgeNumberManager = await BadgeNumberManager.init();
-  badgeNumberManager.startStorageChangeListener();
+  badgeNumberManager.startListeners();
   const ntfyNotificationManager =
     await NtfyNotificationManager.init(badgeNumberManager);
   const browserNotificationManager = new BrowserNotificationManager();

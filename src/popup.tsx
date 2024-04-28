@@ -20,7 +20,7 @@ const Popup = () => {
   useEffect(() => {
     BadgeNumberManager.init()
       .then((badgeManager) => {
-        badgeManager.startStorageChangeListener();
+        badgeManager.startListeners();
         setBadgeNumberManager(badgeManager);
 
         return NtfyNotificationManager.init(badgeManager);
@@ -73,5 +73,5 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Popup />
-  </React.StrictMode>,
+  </React.StrictMode>
 );

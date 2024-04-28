@@ -14,8 +14,8 @@ export default class BadgeNumberManager implements BadgeNumberManagerInterface {
 
   private constructor() {}
 
-  static async init() {
-    if (BadgeNumberManager.instance) {
+  static async init(reset = false) {
+    if (!reset && BadgeNumberManager.instance) {
       return BadgeNumberManager.instance;
     }
     BadgeNumberManager.instance = new BadgeNumberManager();
@@ -73,7 +73,7 @@ export default class BadgeNumberManager implements BadgeNumberManagerInterface {
     return await action.setBadgeText({ text });
   }
 
-  startStorageChangeListener() {
+  startListeners() {
     storage.local.onChanged.addListener((changes) => {
       const newValue = changes[BADGE_NUMBER_MANAGER_STORAGE_KEY]?.newValue;
       if (!newValue) return;

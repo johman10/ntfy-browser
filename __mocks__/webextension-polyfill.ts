@@ -30,6 +30,9 @@ export const storage: DeepPartial<Storage.Static> = {
       storedValues = {};
       return Promise.resolve;
     }),
+    onChanged: {
+      addListener: jest.fn(),
+    },
   },
 };
 

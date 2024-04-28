@@ -107,9 +107,8 @@ describe("NtfyNotificationManager", () => {
     it("adds the notification to storage", async () => {
       await ntfyNotificationManager.publish(ntfyNotificationMinimal);
 
-      expect(
-        await storage.local.get([NTFY_NOTIFICATION_MANAGER_STORAGE_KEY])
-      ).toEqual({
+      expect(storage.local.set).toHaveBeenCalledTimes(1);
+      expect(storage.local.set).toHaveBeenCalledWith({
         [NTFY_NOTIFICATION_MANAGER_STORAGE_KEY]: {
           notificationCache: [ntfyNotificationMinimal],
         },

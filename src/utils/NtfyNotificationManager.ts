@@ -148,5 +148,12 @@ export default class NtfyNotificationManager {
         await this.badgeNumberManager.lower();
       }
     });
+
+    storage.local.onChanged.addListener((changes) => {
+      const newValue = changes[NTFY_NOTIFICATION_MANAGER_STORAGE_KEY]?.newValue;
+      if (!newValue) return;
+
+      this.notificationCache = newValue.notificationCache;
+    });
   }
 }
