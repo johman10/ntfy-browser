@@ -11,12 +11,12 @@ export default class MessageHandler<
 > {
   requests = new Map<
     MessageToHandle["type"],
-    (data: any, sender: Runtime.MessageSender) => void
+    (data: unknown, sender: Runtime.MessageSender) => void
   >();
 
   registerMessengerRequests() {
     throw new Error(
-      "Implementation error: missing overwrite for registerMessengerRequests",
+      "Implementation error: missing overwrite for registerMessengerRequests"
     );
   }
 
@@ -34,7 +34,7 @@ export default class MessageHandler<
 
   protected async sendMessage<T>(
     type: SendingMessageType,
-    data: any = null,
+    data: unknown = null
   ): Promise<T | null> {
     try {
       const response = await runtime.sendMessage({ type, data });

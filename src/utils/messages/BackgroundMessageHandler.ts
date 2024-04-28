@@ -13,7 +13,7 @@ export const enum BackgroundMessageType {
 
 export interface BackgroundMessage {
   type: BackgroundMessageType;
-  data: any;
+  data: unknown;
 }
 
 export default class BackgroundMessageHandler extends MessageHandler<
@@ -22,7 +22,7 @@ export default class BackgroundMessageHandler extends MessageHandler<
 > {
   constructor(
     private topicSubscriptionManager: TopicSubscriptionManager,
-    private errorHandler: ErrorHandler,
+    private errorHandler: ErrorHandler
   ) {
     super();
   }
@@ -34,7 +34,7 @@ export default class BackgroundMessageHandler extends MessageHandler<
         await this.topicSubscriptionManager.subscribeAll();
       const failedResponses = connectionResults.filter(
         (eventResponse): eventResponse is SubscriptionResultFailure =>
-          eventResponse.status === SubscriptionResultStatus.FAILURE,
+          eventResponse.status === SubscriptionResultStatus.FAILURE
       );
       if (failedResponses.length) {
         const failedTopicNames = failedResponses
@@ -42,7 +42,7 @@ export default class BackgroundMessageHandler extends MessageHandler<
           .join(", ");
         this.errorHandler.report(
           new Error(`[ntfy-browser] Unable to connect to ${failedTopicNames}`),
-          failedTopicNames,
+          failedTopicNames
         );
       }
       return connectionResults;
@@ -55,7 +55,7 @@ export default class BackgroundMessageHandler extends MessageHandler<
   registerMessengerRequests() {
     this.requests.set(
       BackgroundMessageType.RECONNECT_TOPICS,
-      this.reconnectTopics,
+      this.reconnectTopics
     );
   }
 }

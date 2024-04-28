@@ -1,10 +1,10 @@
-name: Build
+name: Validate
 
 on:
   workflow_call:
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,16 +15,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm clean-install
-      - name: Build
-        run: npm run build --if-present
-      - name: Upload bundled extensions
-        uses: actions/upload-artifact@v4
-        with:
-          name: bundled-extensions
-          path: dist/*.zip
+      - name: Lint
+        run: |
+          npm run lint && npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: Test
+        run: npm test
