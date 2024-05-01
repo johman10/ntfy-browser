@@ -14,7 +14,8 @@
     "test": "jest",
     "style": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky"
   },
   "author": "Johan van Eck",
   "license": "MIT",
@@ -33,6 +34,7 @@
     "react-hook-form": "^7.51.3"
   },
   "devDependencies": {
+    "@commitlint/config-conventional": "^19.2.2",
     "@types/chrome": "^0.0.267",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.1",
@@ -40,13 +42,16 @@
     "@types/webextension-polyfill": "^0.10.4",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
+    "commitlint": "^19.3.0",
     "copy-webpack-plugin": "^12.0.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.50.0",
     "eslint-plugin-react": "^7.34.1",
+    "husky": "^9.0.11",
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
+    "semantic-release": "^23.0.8",
     "ts-jest": "^29.1.2",
     "ts-loader": "^9.4.4",
     "typescript": "^5.4.5",

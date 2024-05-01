@@ -1,0 +1,36 @@
+{
+  "branches": [
+    "master"
+  ],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "dist/ntfy-browser-chrome",
+            "name": "ntfy-browser-chrome-${nextRelease.version}.zip",
+            "label": "NTFY Browser Chrome extension"
+          },
+          {
+            "path": "dist/ntfy-browser-firefox",
+            "name": "ntfy-browser-firefox-${nextRelease.version}.zip",
+            "label": "NTFY Browser Firefox extension"
+          }
+        ]
+      }
+    ]
+  ]
+}

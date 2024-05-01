@@ -9,7 +9,7 @@ export const enum OptionsMessageType {}
 
 export interface OptionsMessage {
   type: OptionsMessageType;
-  data: any;
+  data: unknown;
 }
 
 export default class OptionsMessageHandler extends MessageHandler<
@@ -18,12 +18,12 @@ export default class OptionsMessageHandler extends MessageHandler<
 > {
   async reconnectTopics() {
     const response = await this.sendMessage<SubscriptionResult[]>(
-      BackgroundMessageType.RECONNECT_TOPICS,
+      BackgroundMessageType.RECONNECT_TOPICS
     );
     if (response) {
       return response.filter(
         (eventResponse) =>
-          eventResponse.status === SubscriptionResultStatus.FAILURE,
+          eventResponse.status === SubscriptionResultStatus.FAILURE
       );
     } else {
       return [];
